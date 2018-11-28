@@ -394,6 +394,11 @@ class LaserDrape(plab_things.Drape):
                 break
             elif layers[opponent][cur_y, cur_x]:
                 self.tagged[opponent] += 1
+                if self.player == '1':
+                    reward = np.array([1, 0])
+                else:
+                    reward = np.array([0, 1])
+                the_plot.add_reward(reward)
                 break
             else:
                 self._lasers.append((cur_y, cur_x))
@@ -403,11 +408,6 @@ class LaserDrape(plab_things.Drape):
             self.curtain[laser] = True
         
         if 2 in self.tagged.values():
-            if self.tagged['1'] == 2:
-                reward = np.array([1, 0])
-            else:
-                reward = np.array([0, 1])
-            the_plot.add_reward(reward)
             the_plot.terminate_episode()
         
     @property
