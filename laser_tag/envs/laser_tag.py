@@ -22,7 +22,7 @@ class LaserTag(gym.Env):
         row = WEST_VIEW + EAST_VIEW + 1
         col = BACKWARD_VIEW + FORWARD_VIEW + 1
 
-        self.action_space = spaces.Discrete(9)
+        self.action_space = spaces.Discrete(10)
         self.observation_space = spaces.Box(low=0, high=255, shape=(row, col, 3), dtype=np.uint8)
 
         self._obs = None
@@ -192,3 +192,51 @@ class LaserTag(gym.Env):
         # if the input image is of shape (m,n,3), the output image will be of shape (k*m, l*n, 3)
         return np.repeat(np.repeat(rgb_array, k, axis=0), l, axis=1)
 
+
+class LaserTag_small2(LaserTag):
+    metadata = {'render.modes': ['human']}
+    def __init__(self):
+        super(LaserTag_small2, self).__init__()
+    
+    def reset(self):
+        self.game = make_game(size=0)
+        (obs, _), _, _ = self.game.its_showtime()
+
+        # Save for rendering before converting obs to player's partial obs
+        self._obs = self._obs_to_rgb(obs)
+
+        partial_obs = (self.make_observation(obs, 1), self.make_observation(obs, 2))
+        rgb_obs = (self._obs_to_rgb(partial_obs[0]), self._obs_to_rgb(partial_obs[1]))
+        return rgb_obs
+
+class LaserTag_small3(LaserTag):
+    metadata = {'render.modes': ['human']}
+    def __init__(self):
+        super(LaserTag_small3, self).__init__()
+    
+    def reset(self):
+        self.game = make_game(size=1)
+        (obs, _), _, _ = self.game.its_showtime()
+
+        # Save for rendering before converting obs to player's partial obs
+        self._obs = self._obs_to_rgb(obs)
+
+        partial_obs = (self.make_observation(obs, 1), self.make_observation(obs, 2))
+        rgb_obs = (self._obs_to_rgb(partial_obs[0]), self._obs_to_rgb(partial_obs[1]))
+        return rgb_obs
+
+class LaserTag_small4(LaserTag):
+    metadata = {'render.modes': ['human']}
+    def __init__(self):
+        super(LaserTag_small4, self).__init__()
+    
+    def reset(self):
+        self.game = make_game(size=2)
+        (obs, _), _, _ = self.game.its_showtime()
+
+        # Save for rendering before converting obs to player's partial obs
+        self._obs = self._obs_to_rgb(obs)
+
+        partial_obs = (self.make_observation(obs, 1), self.make_observation(obs, 2))
+        rgb_obs = (self._obs_to_rgb(partial_obs[0]), self._obs_to_rgb(partial_obs[1]))
+        return rgb_obs

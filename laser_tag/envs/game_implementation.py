@@ -71,8 +71,6 @@ class Actions(enum.IntEnum):
     FORWARD_LEFT = 6
     FORWARD_RIGHT = 7
     BEAM = 8
-
-    # This will not be used by agent
     STAY = 9
 
 
