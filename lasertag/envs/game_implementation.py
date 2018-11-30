@@ -121,7 +121,7 @@ class PlayerSprite(prefab_sprites.MazeWalker):
         super(PlayerSprite, self).__init__(
             corner, position, character, impassable=impassable, confined_to_board=True)
         self.directions = None
-        self.__frame = 0
+        self._frame = 0
         self.is_respawned = False
 
     def update(self, actions, board, layers, backdrop, things, the_plot):
@@ -154,8 +154,8 @@ class PlayerSprite(prefab_sprites.MazeWalker):
             self._stay(board, the_plot)
         
         self.is_respawned = False
-        self.__frame += 1
-        if self.__frame - 1 == NUM_FRAMES:
+        self._frame += 1
+        if self._frame - 1 == NUM_FRAMES:
             the_plot.terminate_episode()
         
     def _turn_left(self, board, the_plot):

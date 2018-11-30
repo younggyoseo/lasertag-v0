@@ -27,6 +27,9 @@ class LaserTag(gym.Env):
 
         self._obs = None
         self.viewer = None
+
+        # info
+        self._prev_frame = 0
     
     def step(self, action):
         (obs, _), reward, _ = self.game.play(action)
@@ -37,7 +40,8 @@ class LaserTag(gym.Env):
         info = None
         if (self.game.things['1'].is_respawned == True or
             self.game.things['2'].is_respawned == True):
-            info = {"is_respawned": True}
+            info = {"tag_interval_length": self.game.things['1']._frame - self._prev_frame}
+            self._prev_frame = self.game.things['1']._frame
 
         # Save for rendering before converting obs to player's partial obs
         self._obs = self._obs_to_rgb(obs)
