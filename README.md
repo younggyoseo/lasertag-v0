@@ -11,7 +11,7 @@ pip install -e .
 # How to use
 ```python
 import gym
-import laser_tag
+import lasertag
 
 env = gym.make("LaserTag-small2-v0")
 (p1_state, p2_state) = env.reset()
