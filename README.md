@@ -1,6 +1,6 @@
 # lasertag-v0
 
-This is an implementation of Google Deepmind's LaserTag-v0 game in [A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning](https://arxiv.org/abs/1711.00832) based on [deepmind/pycolab](https://github.com/deepmind/pycolab). I'm implementing other games like **gathering**, **pathfinder** so wait for me to release all games in the paper.
+This is an implementation of Google Deepmind's LaserTag-v0 game in [A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning](https://arxiv.org/abs/1711.00832) based on [deepmind/pycolab](https://github.com/deepmind/pycolab).
 
 # Install
 ```bash
