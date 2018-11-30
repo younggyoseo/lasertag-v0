@@ -122,6 +122,7 @@ class PlayerSprite(prefab_sprites.MazeWalker):
             corner, position, character, impassable=impassable, confined_to_board=True)
         self.directions = None
         self.__frame = 0
+        self.is_respawned = False
 
     def update(self, actions, board, layers, backdrop, things, the_plot):
         if actions is not None:
@@ -152,6 +153,7 @@ class PlayerSprite(prefab_sprites.MazeWalker):
         else:  # STAY or BEAM 
             self._stay(board, the_plot)
         
+        self.is_respawned = False
         self.__frame += 1
         if self.__frame - 1 == NUM_FRAMES:
             the_plot.terminate_episode()
@@ -424,6 +426,7 @@ class LaserDrape(plab_things.Drape):
             self.tagged['2'] = 0
             things[opponent]._random_spawn(layers)
             things[opponent]._set_initial_direction(board, the_plot)
+            things[opponent].is_respawned = True
 
             opponent_direction = 'R' if opponent == '1' else 'B'
             things[opponent_direction].update(things[opponent_direction], board, layers, backdrop, things, the_plot)

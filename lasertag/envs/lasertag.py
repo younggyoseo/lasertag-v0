@@ -33,7 +33,11 @@ class LaserTag(gym.Env):
         done = self.game.game_over
         if reward is None:
             reward = np.array([0, 0])
+
         info = None
+        if (self.game.things['1'].is_respawned == True or
+            self.game.things['2'].is_respawned == True):
+            info = {"is_respawned": True}
 
         # Save for rendering before converting obs to player's partial obs
         self._obs = self._obs_to_rgb(obs)
