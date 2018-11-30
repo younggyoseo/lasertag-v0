@@ -12,6 +12,8 @@ from pycolab.prefab_parts import sprites as prefab_sprites
 from pycolab import human_ui
 from pycolab import ascii_art
 
+NUM_FRAMES = 1000
+
 LEVELS = [
     ['*********',
      '*P     P*',
@@ -85,7 +87,7 @@ def random_level(level):
     num_spawns = len(indices)
     rand_indices = np.random.choice(num_spawns, 2, replace=False)
 
-    new_chars = [' '] * num_spawns
+    new_chars = ['P'] * num_spawns
     new_chars[rand_indices[0]] = '1'
     new_chars[rand_indices[1]] = '2'
 
@@ -97,7 +99,7 @@ def random_level(level):
 def make_game(size=0):
     """Build and returns a game of LaserTag."""
     return ascii_art.ascii_art_to_game(
-        random_level(LEVELS[size]), what_lies_beneath=' ',
+        LEVELS[size], what_lies_beneath=' ',
         sprites={
             '1': PlayerSprite,
             '2': PlayerSprite},
@@ -106,7 +108,7 @@ def make_game(size=0):
             'B': DirectionDrape,
             'r': LaserDrape,
             'b': LaserDrape},
-        update_schedule=[['1', '2'], ['R', 'B'], ['r', 'b']],
+        update_schedule=[['1'], ['2'], ['R', 'B'], ['r', 'b']],
         z_order = ['R', 'B', 'r', 'b', '1', '2'])
 
 class PlayerSprite(prefab_sprites.MazeWalker):
@@ -119,6 +121,7 @@ class PlayerSprite(prefab_sprites.MazeWalker):
         super(PlayerSprite, self).__init__(
             corner, position, character, impassable=impassable, confined_to_board=True)
         self.directions = None
+        self.__frame = 0
 
     def update(self, actions, board, layers, backdrop, things, the_plot):
         if actions is not None:
@@ -126,6 +129,7 @@ class PlayerSprite(prefab_sprites.MazeWalker):
         else:
             p_actions = None
         if p_actions is None:                     # Initialization
+            self._random_spawn(layers)
             self._set_initial_direction(board, the_plot)
         elif p_actions == Actions.FORWARD:
             self._forward(board, the_plot)
@@ -147,7 +151,11 @@ class PlayerSprite(prefab_sprites.MazeWalker):
             self._turn_right(board, the_plot)
         else:  # STAY or BEAM 
             self._stay(board, the_plot)
-
+        
+        self.__frame += 1
+        if self.__frame - 1 == NUM_FRAMES:
+            the_plot.terminate_episode()
+        
     def _turn_left(self, board, the_plot):
         if self.directions == self._NORTH:
             chk = self._check_motion(board, self._WEST, is_turn=True)
@@ -223,6 +231,12 @@ class PlayerSprite(prefab_sprites.MazeWalker):
             self._move(board, the_plot, self._SOUTH)
         else:
             assert False, "Direction is not set! at {}".format(self.directions)
+
+    def _random_spawn(self, layers):
+        p_indices = np.where(layers['P'] == True)
+        random_spawn_locations = list(zip(p_indices[0], p_indices[1]))
+        random_spawn_location = random.sample(random_spawn_locations, 1)[0]
+        self._teleport(random_spawn_location)
 
     def _set_initial_direction(self, board, the_plot):
         north_check = self._check_motion(board, self._NORTH)
@@ -406,7 +420,14 @@ class LaserDrape(plab_things.Drape):
             self.curtain[laser] = True
         
         if 2 in self.tagged.values():
-            the_plot.terminate_episode()
+            self.tagged['1'] = 0
+            self.tagged['2'] = 0
+            things[opponent]._random_spawn(layers)
+            things[opponent]._set_initial_direction(board, the_plot)
+
+            opponent_direction = 'R' if opponent == '1' else 'B'
+            things[opponent_direction].update(things[opponent_direction], board, layers, backdrop, things, the_plot)
+
         
     @property
     def lasers(self):

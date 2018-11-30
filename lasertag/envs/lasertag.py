@@ -3,7 +3,7 @@ import numpy as np
 
 from gym import error, spaces, utils
 from gym.utils import seeding
-from laser_tag.envs.game_implementation import make_game, COLOURS
+from lasertag.envs.game_implementation import make_game, COLOURS
 
 # MACRO
 NORTH = (-1, 0)
